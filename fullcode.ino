@@ -33,8 +33,12 @@ void setup() {
     esc2.attach(6); // Attach ESC2 to pin 6
     servo1.attach(5); // Attach servo1 to pin 5
 
+    //Callibrating ESCs
+    calibrateESC(esc1);
+    calibrateESC(esc2);
+
     // Set initial servo position to 90 degrees (middle)
-    servo1.write(servo1Value);
+    servo1.write(servo1Value); 
 }
 
 void loop() {
@@ -42,29 +46,32 @@ void loop() {
         handleBluetoothCommand(); // Handle the received Bluetooth command
     }
 
-    // Handle servo movement
-    if (moveServoLeft && millis() - lastServoMoveTime > 250) {
-        servo1Value = max(servo1Value - 5, 45); // Decrease the value by 5 degrees, not going below 45
-        Serial.println(servo1Value);
-        servo1.write(servo1Value); // Send the new position to the servo
-        lastServoMoveTime = millis(); // Update the timestamp of the last movement
+    // Check if servo should move left
+    if (moveServoLeft && millis() - lastServoMoveTime > 30) {
+        servo1Value = max(servo1Value - 1, 45);  // Decrease value, not below 45
+        //Serial.println(servo1Value);  // Print the current servo value for debugging
+        servo1.write(servo1Value);  // Move the servo
+        lastServoMoveTime = millis();  // Update timestamp
     }
-    if (moveServoRight && millis() - lastServoMoveTime > 250) {
-        servo1Value = min(servo1Value + 5, 135); // Increase the value by 5 degrees, not exceeding 135
-        Serial.println(servo1Value);
-        servo1.write(servo1Value); // Send the new position to the servo
-        lastServoMoveTime = millis(); // Update the timestamp of the last movement
-    }
-    if (!moveServoRight && !moveServoLeft && servo1Value!=90 && millis() - lastServoMoveTime > 333){
-        if (servo1Value > 90){
-            servo1Value = max(servo1Value - 5, 90);
-        } else {
-            servo1Value = min(servo1Value + 5, 90);
-        }
-        servo1.write(servo1Value); // Send the new position to the servo
-        Serial.println(servo1Value);
-        lastServoMoveTime = millis(); // Update the timestamp of the last movement
 
+    // Check if servo should move right
+    if (moveServoRight && millis() - lastServoMoveTime > 30) {
+        servo1Value = min(servo1Value + 1, 135);  // Increase value, not above 135
+        //Serial.println(servo1Value);  // Print the current servo value for debugging
+        servo1.write(servo1Value);  // Move the servo
+        lastServoMoveTime = millis();  // Update timestamp
+    }
+
+    // Check if servo should return to center
+    if (!moveServoRight && !moveServoLeft && servo1Value != 90 && millis() - lastServoMoveTime > 30) {
+        if (servo1Value > 90) {
+            servo1Value = max(servo1Value - 1, 90);  // Move back to center from right
+        } else {
+            servo1Value = min(servo1Value + 1, 90);  // Move back to center from left
+        }
+        servo1.write(servo1Value);  // Move the servo
+        //Serial.println(servo1Value);  // Print the current servo value for debugging
+        lastServoMoveTime = millis();  // Update timestamp
     }
 }
 
@@ -100,7 +107,7 @@ void handleBluetoothCommand() {
     Serial.println(servo1Value);
 }
 
-void calibrateESC(Servo& esc) {
+void calibrateESC(Servo &esc) {
     // Send maximum signal to ESC
     esc.writeMicroseconds(2000);
     delay(2000); // Wait for 2 seconds

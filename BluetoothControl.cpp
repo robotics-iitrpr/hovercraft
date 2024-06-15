@@ -4,7 +4,7 @@
 BluetoothSerial SerialBT;
 
 // Initialize global variables for ESC and servo control
-int esc1Value=1000, esc2Value=1000, servo1Value = 90;
+int esc1Value = 1000, esc2Value = 1000, servo1Value = 90;
 bool moveServoLeft = false;
 bool moveServoRight = false;
 

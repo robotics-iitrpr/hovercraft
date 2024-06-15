@@ -15,6 +15,8 @@ void initializeServos() {
     esc2.attach(6);  // Attach ESC2 to pin 6
     servo1.attach(5);  // Attach servo1 to pin 5
     servo1.write(servo1Value);  // Set initial servo position to 90 degrees (middle)
+    calibrateESC(esc1);  // Calibrate ESC1
+    calibrateESC(esc2);  // Calibrate ESC2
 }
 
 // Function to handle servo movements based on commands
